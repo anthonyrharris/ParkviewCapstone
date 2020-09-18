@@ -1,0 +1,182 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Pulse.EntityFramework.Models
+@using Web.ViewModels.AccountManagementViewModels
+
+@inject SignInManager<Account> signInManager
+@inject UserManager<Account> userManager
+
+@model ManageViewModel
+@{
+    ViewData["Title"] = "Manage Account";
+    Layout = "../Shared/_Layout.cshtml";
+}
+<style>
+    .row{
+        display: flex;
+        justify-content: center;
+        text-align: center;
+    }
+</style>
+
+<div class="row">
+    <div class="col-6" style="float: center">
+        <h1>@ViewData["Title"]</h1>
+        <h4>Manage your account.</h4>
+        <hr />
+        <!--The username can't be changed-->
+        <br>
+        <div class="form-group">
+            <label asp-for="UserName"></label>
+            <input asp-for="UserName" class="form-control" disabled/>
+            <span asp-validation-for="UserName" class="text-danger"></span>
+        </div>
+        <!--Email-->
+        <form asp-controller="Manage" asp-action="ChangeEmail" method="post">  
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <label asp-for="Email"></label>
+            <input asp-for="Email" class="form-control" disabled/>
+            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalEmail">Change your email</button>
+            <div id="myModalEmail" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Change your email</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label asp-for="Email"></label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </form>
+        <!--Name-->
+        <br>
+        <form asp-controller="Manage" asp-action="ChangeName" method="post">
+            <input asp-for="Name" class="form-control" disabled/>
+            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalName">Change name</button>
+            <div id="myModalName" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Change your name</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label asp-for="Name"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </form>
+        <!--Phone number-->
+        <br>
+        <form asp-controller="Manage" asp-action="ChangePhoneNumber" method="post">
+            <label asp-for="PhoneNumber"></label>
+            <input asp-for="PhoneNumber" class="form-control" disabled/>
+            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalPhoneNumber">Change phone number</button>
+            <div id="myModalPhoneNumber" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Change your phone number.</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label asp-for="PhoneNumber"></label>
+                                <input asp-for="PhoneNumber" class="form-control" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </form>
+        <!--Location-->
+        <br>
+        <form asp-controller="Manage" asp-action="ChangeLocation" method="post">
+            <label asp-for="Location"></label>
+            <input asp-for="Location" class="form-control"  disabled/>
+            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalLocation">Change location</button>
+            <div id="myModalLocation" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Change your location.</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label asp-for="Location"></label>
+                                <input asp-for="Location" class="form-control" />
+                                <span asp-validation-for="Location" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!--Change password-->
+        <br>
+        <form asp-controller="Manage" asp-action="ChangePassword" method="post">
+            <label asp-for="Password"></label>
+            <br>
+            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalPassword">Change password</button>
+            <div id="myModalPassword" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Change your password.</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label asp-for="Password"></label>
+                                <input asp-for="Password" class="form-control" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="NewPassword"></label>
+                                <input asp-for="NewPassword" class="form-control" />
+                                <span asp-validation-for="NewPassword" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,200 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Pulse.EntityFramework.Models
+@using Pulse.ViewModels.ChatViewModels
+
+@inject SignInManager<Account> signInManager
+@inject UserManager<Account> userManager
+
+@model ChatViewModel;
+@{
+    ViewData["Title"] = "Chat";
+}
+
+@if (Model.PeerCoach != null)
+{
+    <script type="text/javascript">
+        function sendResources() {
+            var list = $('.shared:checked');
+
+            for (var i = 0; i < list.length; i++) {
+                $('#messageInput').val(`${$('#messageInput').val()} <a href=${list[i].value}>${list[i].id}</a>`);
+                list[i].checked = false;
+            }
+        }
+    </script>
+}
+
+@{
+    var currentUser = await userManager.GetUserAsync(User);
+    var isAdmin = currentUser != null && await userManager.IsInRoleAsync(currentUser, "Admin");
+    var isPeerCoach = currentUser != null && await userManager.IsInRoleAsync(currentUser, "PeerCoach");
+    var isPatient = currentUser != null && await userManager.IsInRoleAsync(currentUser, "Patient");
+}
+
+<div class="card mb-4 mt-3" id="messagesList">
+    @if (isPatient && Model.PeerCoach == null)
+    {
+        <p class="m-1">Sorry @Model.Patient.Name, you do not have a peer coach yet.</p>
+    }
+    @foreach (var message in Model.MessageHistory)
+    {
+        if (isPatient)
+        {
+
+            if (message.SenderId == Model.Patient.Id)
+            {
+                <div class="card d-flex align-items-end border-0">
+                    <div class="card mb-4 mt-3 mr-1 ml-1">
+                        <div class="card-header">
+                            @Model.Patient.Name
+                        </div>
+                        <div class="card-body">
+                            @Html.Raw(@message.Content)
+                        </div>
+                    </div>
+                </div>
+            }
+            else if (message.SenderId == Model.PeerCoach.Id)
+            {
+                <div class="card d-flex align-items-start border-0">
+                    <div class="card mb-4 mt-3 mr-1 ml-1">
+                        <div class="card-header">
+                            @Model.PeerCoach.Name
+                        </div>
+                        <div class="card-body">
+                            @Html.Raw(@message.Content)
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            if (message.SenderId == Model.Patient.Id)
+            {
+                <div class="card d-flex align-items-start border-0">
+                    <div class="card mb-4 mt-3 mr-1 ml-1">
+                        <div class="card-header">
+                            @Model.Patient.Name
+                        </div>
+                        <div class="card-body">
+                            @Html.Raw(@message.Content)
+                        </div>
+                    </div>
+                </div>
+            }
+            else if (message.SenderId == Model.PeerCoach.Id)
+            {
+                <div class="card d-flex align-items-end border-0">
+                    <div class="card mb-4 mt-3 mr-1 ml-1">
+                        <div class="card-header">
+                            @Model.PeerCoach.Name
+                        </div>
+                        <div class="card-body">
+                            @Html.Raw(@message.Content)
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    }
+</div>
+@if (!isAdmin && Model.Receiver != null)
+{
+    <div class="input-group-prepend mb-3">
+        <input type="text" class="form-control" id="messageInput" aria-describedby="emailHelp" placeholder="Type a new message">
+        <button id="sendButton" class="btn btn-primary">Send</button>
+        @if (isPeerCoach)
+        {
+            <button class="btn btn-primary ml-1" data-toggle="modal" data-target="#resources">Resources</button>
+        }
+        <span hidden id="senderId">@Model.Sender.Id</span>
+        <span hidden id="senderName">@Model.Sender.Name</span>
+        <span hidden id="receiverId">@Model.Receiver.Id</span>
+        <span hidden id="receiverName">@Model.Receiver.Name</span>
+    </div>
+}
+
+@*Modal*@
+<div class="modal" tabindex="-1" role="dialog" id="resources">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Available Resources</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table">
+                    <table class="table table-bordered" id="dataTable">
+                        <thead>
+                            <tr>
+                                <th>Resource</th>
+                                <th>Share</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var resource in Model.Resources)
+                            {
+                                <tr>
+                                    <td>@resource.Filename</td>
+                                    <td class="text-center">
+                                        <input name="shared" class="shared" id="@resource.Filename" value="@resource.Location" type="checkbox" />
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="sendResources()">Share Resources</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<div class="row">
+        <div class="col-12">
+
+
+            @if (isPeerCoach || isAdmin)
+            {
+                <b>Peer Coach: </b>@Model.Sender.Name <br />
+                <b>Patient: </b>@Model.Receiver.Name
+            }
+            else if (isPatient)
+            {
+                <b>Peer Coach: </b>@Model.Receiver.Name <br />
+                <b>Patient: </b>@Model.Sender.Name
+            }
+            <hr />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            @foreach (var message in Model.MessageHistory)
+            {
+                <p><b>@(message.SenderId != @Model.Sender.Id ? @Model.Receiver.Name : @Model.Sender.Name):</b> @message.Content</p>
+            }
+            <div id="messagesList"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                @{
+
+
+                    <input type="file" name="file">
+                }
+            </div>
+        </div>
+
+    </div>*@
+
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/chat.js"></script>

@@ -1,0 +1,97 @@
+﻿@using Web.ViewModels.UserManagementViewModels
+@model EditUserViewModel
+@{
+    ViewData["Title"] = "Edit User";
+}
+
+<h1>@ViewData["Title"]</h1>
+<h4>Edit @Model.Name's account.</h4>
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <form asp-controller="EditUser" asp-action="Edit" method="post">
+                <hr />
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Email"></label>
+                    <input asp-for="Email" class="form-control" readonly="readonly" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="UserName"></label>
+                    <input asp-for="UserName" class="form-control" readonly="readonly" />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Name"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PhoneNumber"></label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Location"></label>
+                    <input asp-for="Location" class="form-control" />
+                    <span asp-validation-for="Location" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Role"></label>
+                    <select asp-for="Role" asp-items="@Model.Roles"></select>
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+            <a asp-controller="Index" asp-action="Index"><button class="btn btn-primary">Cancel</button></a>
+        </div>
+        <div class="col-4">
+            @if (Model.Role.Equals("PeerCoach"))
+            {
+                <h4>Assigned Patients</h4>
+                @if (Model.AssignedPatients.Count > 0)
+                {
+                    @foreach (var patient in Model.AssignedPatients)
+                    {
+                        <p>@patient.Name <a asp-controller="EditUser" asp-action="Unassign" asp-route-username="@Model.UserName" asp-route-patientId="@patient.Id">Unassign</a></p>
+                    }
+                }
+                else
+                {
+                    <p>@Model.Name has no assigned patients.</p>
+                }
+                <div class="unassigned-patients">
+                    @if (Model.UnassignedPatients.Count > 0)
+                    {
+                        <h4>Unassigned Patients</h4>
+                        @foreach (var patient in Model.UnassignedPatients)
+                        {
+                            <p>@patient.Name  <a asp-controller="EditUser" asp-action="Assign" asp-route-username="@Model.UserName" asp-route-patientId="@patient.Id">Assign</a></p>
+                        }
+                    }
+                    else
+                    {
+                        <p>There are no unassigned patients in the application.</p>
+                    }
+                </div>
+            }
+            else if (Model.Role.Equals("Patient"))
+            {
+                <h4>Assigned Peer Coach</h4>
+                @if (Model.AssignedPeerCoach.Length > 1)
+                {
+                    <p>@Model.AssignedPeerCoach</p>
+                }
+                else
+                {
+                    <p>@Model.Name does not have a Peer Coach yet.</p>
+                }
+            }
+        </div>
+    </div>
+
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+</div>

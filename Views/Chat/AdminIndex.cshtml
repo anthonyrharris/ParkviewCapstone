@@ -1,0 +1,45 @@
+﻿@using Web.ViewModels.ChatViewModels;
+@using Microsoft.AspNetCore.Identity
+@using Pulse.EntityFramework.Models
+
+@inject SignInManager<Account> signInManager
+@inject UserManager<Account> userManager
+@model ChatAdminViewModel;
+
+@{
+    ViewData["Title"] = "All Current Chats";
+}
+
+<div class="card mb-4 mt-3">
+    <div class="card-header"><i class="fas fa-table mr-1"></i>@ViewData["Title"]</div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Peer Coach</th>
+                        <th>Patient</th>
+                        <th>Messages</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Assignments.Count > 0)
+                    {
+                        @foreach (var assignment in Model.Assignments)
+                        {
+                            <tr>
+                                <td>@assignment.PeerCoach.Name</td>
+                                <td>@assignment.Patient.Name</td>
+                                <td class="text-center">
+                                    <a asp-controller="Chat" asp-action="ViewChat" asp-route-peerCoachId="@assignment.PeerCoach.Id" asp-route-patientId="@assignment.Patient.Id">
+                                        <button class="btn btn-primary">View Messages</button>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

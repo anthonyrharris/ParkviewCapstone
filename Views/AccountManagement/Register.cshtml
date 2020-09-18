@@ -1,0 +1,102 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Pulse.EntityFramework.Models
+@using Web.ViewModels
+
+@inject SignInManager<Account> signInManager
+@inject UserManager<Account> userManager
+
+@model RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+    Layout = "../Shared/_Layout.cshtml";
+}
+<div class="bg-primary">
+    <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+            <main>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-7">
+                            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                                <div class="card-header">
+                                    <h3 data-cy="registration-header" class="text-center font-weight-light my-4">@ViewData["Title"]</h3>
+                                    <div asp-validation-summary="All" class="text-danger"></div>
+                                </div>
+                                <div class="card-body">
+                                    <form asp-controller="Register" asp-action="Register" method="post">
+                                        <div class="form-row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="small mb-1" asp-for="Name"></label>
+                                                    <input data-cy="name-input" asp-for="Name" class="form-control py-4" placeholder="Name" />
+                                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="small mb-1" asp-for="UserName"></label>
+                                                    <input data-cy="username-input" asp-for="UserName" class="form-control py-4" placeholder="Username" />
+                                                    <span asp-validation-for="UserName" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="small mb-1" asp-for="Location"></label>
+                                                    <input data-cy="location-input" asp-for="Location" class="form-control py-4" placeholder="Location" />
+                                                    <span asp-validation-for="Location" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="small mb-1" asp-for="PhoneNumber"></label>
+                                                    <input data-cy="phone-number-input" asp-for="PhoneNumber" class="form-control py-4" placeholder="Phone Number" />
+                                                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <div class="form-group">
+                                            <label class="small mb-1" asp-for="Email"></label>
+                                            <input data-cy="email-input" asp-for="Email" class="form-control py-4" placeholder="Email Address" />
+                                            <span asp-validation-for="Email" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="small mb-1" asp-for="Password"></label>
+                                                    <input data-cy="password-input" asp-for="Password" class="form-control py-4" placeholder="Password" />
+                                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="small mb-1" asp-for="ConfirmPassword"></label>
+                                                    <input data-cy="confirm-password-input" asp-for="ConfirmPassword" class="form-control py-4" placeholder="Confirm Password" />
+                                                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group mt-4 mb-0">
+                                            <button class="btn btn-primary btn-block" data-cy="password-button" type="submit">Create Account</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="card-footer text-center">
+                                    <div class="small">
+                                        <a asp-controller="Login" asp-action="Login">Have an account? Login</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

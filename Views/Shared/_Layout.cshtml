@@ -1,0 +1,153 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Pulse.EntityFramework.Models
+
+@inject SignInManager<Account> signInManager
+@inject UserManager<Account> userManager
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]Pulse</title>
+    <link href="~/css/styles.css" rel="stylesheet" />
+    <link href="~/lib/fontawesome-free-5.12.1-web/css/all.min.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/layout_syles.css" rel="stylesheet" />
+    <link href="~/css/chat.css" rel="stylesheet" />
+    <link href="~/css/users.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!--two below are for datatable for users-->
+    <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
+    <link href="~/lib/fontawesome-free-5.12.1-web/css/all.min.css" rel="stylesheet" />
+    <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+
+</head>
+<body class="sb-nav-fixed">
+    <!--Side bar navigation-->
+    @if (signInManager.IsSignedIn(User))
+    {
+        var currentUser = await userManager.GetUserAsync(User);
+        var isAdmin = currentUser != null && await userManager.IsInRoleAsync(currentUser, "Admin");
+        var isPeerCoach = currentUser != null && await userManager.IsInRoleAsync(currentUser, "PeerCoach");
+        var isPatient = currentUser != null && await userManager.IsInRoleAsync(currentUser, "Patient");
+
+        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+            <a class="navbar-brand" href="/">Home</a>
+
+            @*Button For Sidebar*@
+            <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
+
+            @*User Drop Down Menu*@
+            <ul class="navbar-nav ml-auto ml-md-0">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="/Account/Manage">Settings</a>
+                        <div class="dropdown-divider"></div>
+                        <form id="logoutForm" class="form-inline" asp-controller="Logout" asp-action="Logout">
+                            <button data-cy="logout-link" id="logout" type="submit" class="dropdown-item">Logout</button>
+                        </form>
+                    </div>
+                </li>
+            </ul>
+
+        </nav>
+
+        <div id="layoutSidenav">
+            <div id="layoutSidenav_nav">
+                <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                    <div class="sb-sidenav-menu">
+                        <div class="nav">
+                            <div class="sb-sidenav-menu-heading">Navigation</div>
+                            <a class="nav-link" href="/Chat">
+                                <div class="sb-nav-link-icon"><i class="fas fa-comments"></i></div>Chat
+                            </a>
+                            <a class="nav-link" href="/Resources">
+                                <div class="sb-nav-link-icon"><i class="fas fa-file-pdf"></i></div>Resources
+                            </a>
+                            @if (isAdmin)
+                            {
+                                <a class="nav-link" href="/Users">
+                                    <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>Users
+                                </a>
+                            }
+
+                            @if (isPeerCoach)
+                            {
+
+                            }
+
+                            @if (isPatient)
+                            {
+
+                            }
+                        </div>
+                    </div>
+                    <div class="sb-sidenav-footer">
+                        <div class="small">Logged in as: @currentUser</div>
+                    </div>
+                </nav>
+            </div>
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid">
+                        @RenderBody()
+                    </div>
+                </main>
+                <footer class="py-4 bg-light mt-auto">
+                    <div class="container-fluid">
+                        <div class="d-flex align-items-center justify-content-between small">
+                            <div class="text-muted">Copyright &copy; Pulse 2020</div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+    }
+    else
+    {
+        @RenderBody()
+    }
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/js/scripts.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
+    <script src="~/js/user_table.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
+
+
+@*<a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+    <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>Documents
+    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+</a>
+<div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+    <nav class="sb-sidenav-menu-nested nav">
+        <a class="nav-link" href="surveys.html">Surveys</a>
+        <a class="nav-link" href="asessments.html">Asseessments</a>
+    </nav>
+</div>
+<a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+    <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>Pages
+    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+</a>
+<div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
+    <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
+            Authentication
+            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+        </a>
+    </nav>
+</div>*@

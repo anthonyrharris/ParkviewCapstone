@@ -1,0 +1,49 @@
+﻿<div class="user-box-table">
+    <div class="control">
+        <a asp-controller="AddUser" asp-action="Create" asp-route-role="Admin"><button class="btn btn-primary">Add A New User</button></a>
+    </div>
+</div>
+<div class="card mb-4">
+    <div class="card-header"><i class="fas fa-table mr-1"></i>User Table</div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>User Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>User Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    @foreach (var User in Model){
+                        <tr>
+                            <td>@User.Name</td>
+                            <td>@User.UserName</td>
+                            <td>@User.Role</td>
+                            <td>
+                                <div class="control">
+                                    <a asp-controller="EditUser" asp-action="Edit" asp-route-id="@User.Id">
+                                        <button type="submit" class="btn btn-primary">Edit</button>
+                                    </a>
+                                    <form asp-controller="RemoveUser" asp-action="Delete" asp-route-id="@User.Id" method="post">
+                                        <button data-cy="remove-user-@User.UserName" type="submit" class="btn btn-primary">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

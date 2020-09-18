@@ -1,0 +1,42 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Pulse.EntityFramework.Models
+@using Web.ViewModels.ResourceViewModels
+
+@inject SignInManager<Account> signInManager
+@inject UserManager<Account> userManager
+
+@{
+    ViewData["Title"] = "Upload Resource";
+}
+
+@model ResourceViewModel
+
+@{
+    var currentUser = await userManager.GetUserAsync(User);
+    var isAdmin = currentUser != null && await userManager.IsInRoleAsync(currentUser, "Admin");
+    var isPeerCoach = currentUser != null && await userManager.IsInRoleAsync(currentUser, "PeerCoach");
+    var isPatient = currentUser != null && await userManager.IsInRoleAsync(currentUser, "Patient");
+}
+
+<div class="container-fluid">
+    <div class="card mb-4 mt-3">
+        <div class="card-header">@ViewData["Title"]</div>
+        <div class="card-body">
+            @if (isAdmin)
+            {
+                @section Scripts{
+                    <script src="~/js/fileUpload.js"></script>
+                    <script>
+        const inputElement = document.querySelector('input[type="file"]');
+        const pond = FilePond.create(inputElement);
+        FilePond.setOptions({
+            server: '@Url.Action("UploadFile","Resources")'
+        })
+                    </script>
+                }
+
+                <input class="mt-3" type="file" />
+            }
+        </div>
+    </div>
+</div>

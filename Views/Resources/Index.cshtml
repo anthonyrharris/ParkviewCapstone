@@ -1,0 +1,64 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Pulse.EntityFramework.Models
+@using Web.ViewModels.ResourceViewModels
+
+@inject SignInManager<Account> signInManager
+@inject UserManager<Account> userManager
+
+@{
+    ViewData["Title"] = "Resources";
+}
+
+@model ResourceViewModel
+
+@{
+    var currentUser = await userManager.GetUserAsync(User);
+    var isAdmin = currentUser != null && await userManager.IsInRoleAsync(currentUser, "Admin");
+    var isPeerCoach = currentUser != null && await userManager.IsInRoleAsync(currentUser, "PeerCoach");
+    var isPatient = currentUser != null && await userManager.IsInRoleAsync(currentUser, "Patient");
+}
+
+<div class="container-fluid">
+    @if (isAdmin)
+    {
+        <a asp-controller="Resources" asp-action="Upload"><button class="btn btn-primary mt-3">Upload Resource</button></a>
+    }
+
+    <div class="card mb-4 mt-3">
+        <div class="card-header">@ViewData["Title"]</div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Resource</th>
+                            <th>Type</th>
+                            <th>Last Modified Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var resource in Model.ResourceList)
+                        {
+                            <tr>
+                                <td>@resource.Filename</td>
+                                <td>Resource Type</td>
+                                <td>@resource.DateAdded</td>
+                                <td class="text-center">
+                                    <a href="@resource.Location"><button class="btn btn-primary">View</button></a>
+                                    @if (isAdmin)
+                                    {
+                                        <form asp-controller="Resources" asp-action="Delete" asp-route-filename="@resource.Filename" method="post">
+                                            <button type="submit" class="btn btn-primary">Delete</button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+

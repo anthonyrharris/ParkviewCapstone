@@ -1,0 +1,67 @@
+﻿@using Web.ViewModels
+@using Microsoft.AspNetCore.Identity
+@using Web.ViewModels.AccountManagementViewModels
+@using Pulse.EntityFramework.Models
+
+@inject SignInManager<Account> signInManager
+@inject UserManager<Account> userManager
+
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = "../Shared/_Layout.cshtml";
+}
+<style>
+.custom-summary ul{
+   list-style-type:none;
+   color: red;
+   padding: 0;
+   text-align: center;
+}
+</style> 
+<div class="bg-primary">
+    <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+            <main>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-5">
+                            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                                <div class="card-header">
+                                    <h3 class="text-center font-weight-light my-4">@ViewData["Title"]</h3>
+                                    @Html.ValidationSummary(true, "", new { @class = "custom-summary" })
+                                </div>
+                                <div class="card-body">
+                                    <form asp-controller="Login" asp-action="Login" method="post">
+                                        <div class="form-group">
+                                            <label class="small mb-1" asp-for="UserName"></label>
+                                            <input class="form-control py-4" data-cy="username-input" asp-for="UserName" placeholder="Enter Username" autocomplete="off"/>
+                                            <span asp-validation-for="UserName" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="small mb-1" asp-for="Password">Password</label>
+                                            <input class="form-control py-4" data-cy="password-input" asp-for="Password" placeholder="Enter password" autocomplete="off"/>
+                                            <span asp-validation-for="Password" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0">
+                                            <button data-cy="login-button" type="submit" class="btn btn-primary" href="">Login</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="card-footer text-center">
+                                    <div class="small">
+                                        <a data-cy="registration-link" asp-controller="Register" asp-action="Register">Need an account? Sign up!</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
